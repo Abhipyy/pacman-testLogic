@@ -1,0 +1,311 @@
+<!DOCTYPE html> 
+<html lang="en-US">
+<head>
+
+<title>Pacman - Play Game Instantly!</title>
+
+<!-- Standard Setup -->
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+<!-- Descriptive Meta Tags -->
+<meta name="description" content="Play the classic Pacman game online. No fuss, 100% free." />
+<meta name="keywords" content="pacman, pac-man, play pacman, pacman game, pacman online" />
+
+<!-- CSS -->
+<link rel="stylesheet" href="build/app.css" />
+
+<!-- Fonts -->
+<link rel="preconnect" href="https://fonts.gstatic.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Open+Sans&display=swap" />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto|Work+Sans:400,600" />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Press+Start+2P&display=swap" />
+<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons" />
+
+<!-- Scripts -->
+<script src="build/app.js"></script>
+<script src="build/custom-functions.js"></script>
+
+</head>
+
+<body>
+
+<div id='full-page-container'>
+  
+<!-- Header Message -->
+<header>
+  <div id="header-message">
+
+  </div>		
+</header>
+<!-- End Header Message -->
+
+<!-- Pacman Game Container --> 
+<main>
+<div id='game-container'>
+
+      <img id='backdrop' class='backdrop' src='app/style/graphics/backdrop.png'>
+
+      <div id='fps-display' class='fps-display'></div>
+      <div id='preload-div' class='preload-div'></div>
+
+      <div id='main-menu-container' class='main-menu-container'>
+        <img id='logo' class='logo' src='app/style/graphics/pacman_logo.png'>
+        <button id='game-start' class='game-start'>
+          PLAY
+        </button>
+      </div>
+
+      <div id='paused-text' class='paused-text'>
+        PAUSED
+      </div>
+
+      <div id='game-ui' class='game-ui'>
+        <div id='row-top' class='row top'>
+
+          <!-- LEFT COLUMN: 1UP + points + ghost touches -->
+          <div class='column _25 left-column'>
+            <div class='one-up'>1UP</div>
+            <div id='points-display'></div>
+            <div id='ghost-touch-label' class='ghost-touch-label' style="display:none;">GHOST TOUCHES</div>
+            <div id='ghost-touch-display' class='ghost-touch-display' style="display:none;">0</div>
+          </div>
+
+          <!-- CENTER COLUMN: HIGH SCORE -->
+          <div class='column _50 center-column'>
+            <div>HIGH SCORE</div>
+            <div id='high-score-display'></div>
+          </div>
+
+          <!-- RIGHT COLUMN: Menu controls (3-bar, pause, reset, ghosts) -->
+          <div class='column _25 right-column'>
+            <div class="header-controls">
+              <label class="ghost-toggle" title="Toggle Ghosts">
+                <input type="checkbox" id="ghost-toggle" checked>
+                <span class="toggle-slider"></span>
+                <span class="toggle-label">GHOSTS</span>
+              </label>
+              <button id='reset-button' class='reset-button' title="Restart Game">
+                <i class='material-icons'>refresh</i>
+              </button>
+              <button class="icon-btn" title="Pause">
+                <i id='pause-button' class='material-icons'>pause</i>
+              </button>
+              <div class="menu-container">
+                <button id="menu-toggle" class="menu-toggle" aria-label="Open menu">
+                  <span class="hamburger"></span>
+                </button>
+                <div id="menu-dropdown" class="menu-dropdown">
+                  <div class="menu-section">
+                    <h4>GHOSTS</h4>
+                    <label class="menu-item">
+                      <input type="checkbox" id="menu-ghost-toggle" checked>
+                      <span>Enable Ghosts</span>
+                    </label>
+                    <label class="menu-item">
+                      <input type="checkbox" id="menu-sleep-ghost" checked>
+                      <span>Sleep Ghost (Power Pellets Work)</span>
+                    </label>
+                    <label class="menu-item">
+                      <input type="checkbox" id="menu-ghost-hit" checked>
+                      <span>Ghost Hit (Ghosts Can Kill)</span>
+                    </label>
+                    <label class="menu-item">
+                      <input type="checkbox" id="menu-unlimited-lives">
+                      <span>Unlimited Lives</span>
+                    </label>
+                    <div class="ghost-individual-controls">
+                      <h5>Individual Ghosts</h5>
+                      <div class="ghost-row" data-ghost="blinky">
+                        <label class="ghost-toggle-inline">
+                          <input type="checkbox" class="ghost-enable" checked data-ghost="blinky">
+                          <span class="ghost-name blinky">Blinky</span>
+                        </label>
+                        <div class="ghost-speed-inline">
+                          <button type="button" class="step-btn" data-target="blinky" data-dir="-1">−</button>
+                          <input type="number" class="ghost-speed-input" data-ghost="blinky" min="0.1" max="2" step="0.1" value="1">
+                          <button type="button" class="step-btn" data-target="blinky" data-dir="1">+</button>
+                          <span class="unit">x</span>
+                        </div>
+                      </div>
+                      <div class="ghost-row" data-ghost="pinky">
+                        <label class="ghost-toggle-inline">
+                          <input type="checkbox" class="ghost-enable" checked data-ghost="pinky">
+                          <span class="ghost-name pinky">Pinky</span>
+                        </label>
+                        <div class="ghost-speed-inline">
+                          <button type="button" class="step-btn" data-target="pinky" data-dir="-1">−</button>
+                          <input type="number" class="ghost-speed-input" data-ghost="pinky" min="0.1" max="2" step="0.1" value="1">
+                          <button type="button" class="step-btn" data-target="pinky" data-dir="1">+</button>
+                          <span class="unit">x</span>
+                        </div>
+                      </div>
+                      <div class="ghost-row" data-ghost="inky">
+                        <label class="ghost-toggle-inline">
+                          <input type="checkbox" class="ghost-enable" checked data-ghost="inky">
+                          <span class="ghost-name inky">Inky</span>
+                        </label>
+                        <div class="ghost-speed-inline">
+                          <button type="button" class="step-btn" data-target="inky" data-dir="-1">−</button>
+                          <input type="number" class="ghost-speed-input" data-ghost="inky" min="0.1" max="2" step="0.1" value="1">
+                          <button type="button" class="step-btn" data-target="inky" data-dir="1">+</button>
+                          <span class="unit">x</span>
+                        </div>
+                      </div>
+                      <div class="ghost-row" data-ghost="clyde">
+                        <label class="ghost-toggle-inline">
+                          <input type="checkbox" class="ghost-enable" checked data-ghost="clyde">
+                          <span class="ghost-name clyde">Clyde</span>
+                        </label>
+                        <div class="ghost-speed-inline">
+                          <button type="button" class="step-btn" data-target="clyde" data-dir="-1">−</button>
+                          <input type="number" class="ghost-speed-input" data-ghost="clyde" min="0.1" max="2" step="0.1" value="1">
+                          <button type="button" class="step-btn" data-target="clyde" data-dir="1">+</button>
+                          <span class="unit">x</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="menu-section">
+                    <h4>PACMAN SPEED</h4>
+                    <div class="speed-control">
+                      <div class="speed-input-label">
+                        <span>Speed</span>
+                        <div class="speed-stepper">
+                          <button type="button" class="step-btn" data-target="speed" data-dir="-1">−</button>
+                          <input type="number" id="speed-input" class="speed-input" min="0.1" max="2" step="0.1" value="1">
+                          <button type="button" class="step-btn" data-target="speed" data-dir="1">+</button>
+                          <span class="unit">x</span>
+                        </div>
+                      </div>
+                      <div class="speed-presets">
+                        <button class="speed-btn" data-speed="0.5">0.5x</button>
+                        <button class="speed-btn active" data-speed="1">1x</button>
+                        <button class="speed-btn" data-speed="1.5">1.5x</button>
+                        <button class="speed-btn" data-speed="2">2x</button>
+                      </div>
+                    </div>
+                    <label class="menu-item">
+                      <input type="checkbox" id="speed-persist" checked>
+                      <span>Persist across levels</span>
+                    </label>
+                  </div>
+
+                  <div class="menu-section">
+                    <h4>DEBUG</h4>
+                    <label class="menu-item">
+                      <input type="checkbox" id="show-fps">
+                      <span>Show FPS</span>
+                    </label>
+                    <label class="menu-item">
+                      <input type="checkbox" id="show-hitboxes">
+                      <span>Show Hitboxes</span>
+                    </label>
+                    <label class="menu-item">
+                      <input type="checkbox" id="show-ghost-touch" checked>
+                      <span>Show Ghost Touches</span>
+                    </label>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <div id='maze' class='maze'>
+          <img id='maze-img' class='maze-img' src='app/style/graphics/spriteSheets/maze/maze_blue.svg'>
+          <div id='maze-cover' class='maze-cover'></div>
+          <div id='dot-container'></div>
+          <p id='pacman' class='pacman'></p>
+          <p id='pacman-arrow' class='pacman'></p>
+          <p id='clyde' class='ghost'></p>
+          <p id='inky' class='ghost'></p>
+          <p id='pinky' class='ghost'></p>
+          <p id='blinky' class='ghost'></p>
+        </div>
+
+        <div id='bottom-row' class='row bottom'>
+          <div id='extra-lives' class='extra-lives'></div>
+          <div id='fruit-display' class='fruit-display'></div>
+        </div>
+      </div>
+
+      <div id='movement-buttons' class='movement-buttons'>
+        <div class='row'>
+          <button id='button-up' class='button-up'>
+            <i class='material-icons'>keyboard_arrow_up</i>
+          </button>
+        </div>
+        <div class='row'>
+          <button id='button-left' class='button-left'>
+            <i class='material-icons'>keyboard_arrow_left</i>
+          </button>
+          <button id='button-right' class='button-right'>
+            <i class='material-icons'>keyboard_arrow_right</i>
+          </button>
+        </div>
+        <div class='row'>
+          <button id='button-down' class='button-down'>
+            <i class='material-icons'>keyboard_arrow_down</i>
+          </button>
+        </div>
+      </div>
+
+      <div id='left-cover' class='loading-cover left'></div>
+      <div id='right-cover' class='loading-cover right'></div>
+      <div id='loading-container' class='loading-container'>
+        <div id='loading-pacman' class='loading-pacman'></div>
+        <div id='loading-dot-mask' class='loading-dot-mask'></div>
+        <div class='loading-dot _5'></div>
+        <div class='loading-dot _10'></div>
+        <div class='loading-dot _15'></div>
+        <div class='loading-dot _20'></div>
+        <div class='loading-dot _25'></div>
+        <div class='loading-dot _30'></div>
+        <div class='loading-dot _35'></div>
+        <div class='loading-dot _40'></div>
+        <div class='loading-dot _45'></div>
+        <div class='loading-dot _50'></div>
+        <div class='loading-dot _55'></div>
+        <div class='loading-dot _60'></div>
+        <div class='loading-dot _65'></div>
+        <div class='loading-dot _70'></div>
+        <div class='loading-dot _75'></div>
+        <div class='loading-dot _80'></div>
+        <div class='loading-dot _85'></div>
+        <div class='loading-dot _90'></div>
+        <div class='loading-dot _95'></div>
+      </div>
+
+      <div id='error-message' class='error-message'>
+        <div class='header'>
+          <div>OOPS!</div>
+          <div class='error-pacman'></div>
+        </div>
+        <div class='body'>
+          We were unable to load the images/sounds needed to play the game.</br></br>
+
+          This could be due to a poor connection, a strict network policy, or
+          by playing on an unsupported browser.
+        </div>
+      </div>
+
+      <script>
+        window.onload = () => {
+          let gameCoordinator = new GameCoordinator();
+          if (window.CustomFunctions) {
+            window.CustomFunctions.init(gameCoordinator);
+          }
+        }
+      </script>
+     
+     </div>
+</main>
+<!-- End Pacman Game Container -->
+
+</div>
+
+</body>
+</html>
