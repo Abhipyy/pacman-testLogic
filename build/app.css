@@ -932,6 +932,41 @@ header { display: none; }
   .movement-buttons { visibility: hidden; }
 }
 
+/* ============================================
+   MOBILE TOUCH HANDLING
+   ============================================ */
+
+/* Prevent iOS double-tap zoom and text selection on the game area */
+#game-container {
+  touch-action: none;
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Make sure interactive UI can still scroll/click */
+.header-controls,
+.menu-dropdown,
+.movement-buttons {
+  touch-action: auto;
+  -webkit-user-select: auto;
+  user-select: auto;
+}
+
+/* Mobile-specific tweaks */
+@media (max-width: 768px) {
+  body {
+    overflow: hidden;
+    position: fixed;
+    width: 100%;
+    height: 100%;
+  }
+
+  #game-container {
+    /* Prevent rubber-band scroll on iOS */
+    overscroll-behavior: none;
+  }
+}
 .error-message {
   color: #231f20;
   opacity: 0;

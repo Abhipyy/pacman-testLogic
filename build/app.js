@@ -1554,6 +1554,87 @@ class GameCoordinator {
             },
                     );
         });
+                // ============================================
+        // Swipe controls (touch + mouse-drag fallback)
+        // ============================================
+        const gameContainer = document.getElementById('game-container');
+        const SWIPE_THRESHOLD = 25;
+
+        let touchStartX = 0;
+        let touchStartY = 0;
+        let touchStartTime = 0;
+        let touchActive = false;
+
+        const onSwipeStart = (x, y) => {
+            touchStartX = x;
+            touchStartY = y;
+            touchStartTime = Date.now();
+            touchActive = true;
+        };
+
+        const onSwipeEnd = (x, y) => {
+            if (!touchActive) return;
+            touchActive = false;
+
+            const dx = x - touchStartX;
+            const dy = y - touchStartY;
+            const elapsed = Date.now() - touchStartTime;
+
+            // Ignore taps and very slow drags
+            if (elapsed > 800) return;
+            if (Math.abs(dx) < SWIPE_THRESHOLD && Math.abs(dy) < SWIPE_THRESHOLD) return;
+
+            let dir;
+            if (Math.abs(dx) > Math.abs(dy)) {
+                dir = dx > 0 ? 'right' : 'left';
+            } else {
+                dir = dy > 0 ? 'down' : 'up';
+            }
+
+            // Bypass the arrow buttons' lockout so swipes always work
+            if (this.pacman) {
+                this.pacman.changeDirection(dir, this.allowPacmanMovement);
+            }
+        };
+
+        // --- Touch events ---
+        gameContainer.addEventListener('touchstart', (e) => {
+            if (e.touches.length !== 1) return;
+            const t = e.touches[0];
+            onSwipeStart(t.clientX, t.clientY);
+        }, { passive: true });
+
+        gameContainer.addEventListener('touchmove', (e) => {
+            // Prevent page scroll while swiping on the game area
+            if (touchActive) {
+                e.preventDefault();
+            }
+        }, { passive: false });
+
+        gameContainer.addEventListener('touchend', (e) => {
+            const t = e.changedTouches[0];
+            onSwipeEnd(t.clientX, t.clientY);
+        }, { passive: true });
+
+        gameContainer.addEventListener('touchcancel', () => {
+            touchActive = false;
+        }, { passive: true });
+
+        // --- Mouse drag fallback (for desktop testing) ---
+        let mouseDown = false;
+        gameContainer.addEventListener('mousedown', (e) => {
+            mouseDown = true;
+            onSwipeStart(e.clientX, e.clientY);
+        });
+        gameContainer.addEventListener('mouseup', (e) => {
+            if (!mouseDown) return;
+            mouseDown = false;
+            onSwipeEnd(e.clientX, e.clientY);
+        });
+        gameContainer.addEventListener('mouseleave', () => {
+            mouseDown = false;
+            touchActive = false;
+        });
     }
 
     changeDirection(direction) {
